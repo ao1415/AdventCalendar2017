@@ -276,6 +276,9 @@
   <ItemGroup>
     <Font Include="Example\YomogiFont.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CryptoArchive.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

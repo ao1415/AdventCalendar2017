@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="リソース ファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -275,7 +271,7 @@
     </None>
     <None Include="Engine\Shaders\D3D11\DeferredMesh_Shadow.vs">
       <Filter>リソース ファイル\Engine\Shaders\D3D11</Filter>
-    </None>    
+    </None>
     <None Include="Engine\Shaders\D3D11\DeferredMesh_Textured.ps">
       <Filter>リソース ファイル\Engine\Shaders\D3D11</Filter>
     </None>
@@ -379,7 +375,7 @@
     </Text>
     <Text Include="Example\Shaders\Wave2DPointSprites.hlsl">
       <Filter>リソース ファイル\Example\Shaders</Filter>
-    </Text>   
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Media Include="Example\Sound.mp3">
@@ -393,5 +389,10 @@
     <Font Include="Example\YomogiFont.ttf">
       <Filter>リソース ファイル\Example</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CryptoArchive.hpp">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
