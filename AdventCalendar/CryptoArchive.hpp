@@ -1,5 +1,73 @@
 #pragma once
 #include <Siv3D.hpp>
+#include <queue>
+
+namespace CryptoArchive
+{
+	/// <summary>
+	/// ファイルアーカイブを作成します。
+	/// </summary>
+	/// <param name="from">
+	/// アーカイブ化するディレクトリ
+	/// </param>
+	/// <param name="to">
+	/// 保存するアーカイブファイル名
+	/// </param>
+	/// <returns>
+	/// ファイルアーカイブの作成に成功した場合 true, それ以外の場合は false
+	/// </returns>
+	bool Create(const FilePath& from, const FilePath& to, const AES128Key& key) {
+
+		/// <summary>作業用のフォルダの名前</summary>
+		const String WorkFolder = L"./encrypt-archive_working-folder/";
+
+		/// <summary>成功フラグ</summary>
+		bool success = true;
+
+		if (FileSystem::IsDirectory(from))
+		{
+			//作業用のフォルダの作成
+			success &= FileSystem::CreateDirectories(WorkFolder);
+
+			//作業フォルダのパス生成
+			const FilePath BaseFolder = WorkFolder + FileSystem::BaseName(from);
+			//対象フォルダを作業フォルダへコピー
+			success &= FileSystem::Copy(from, BaseFolder);
+
+			//作業フォルダ以下のファイルをすべて暗号化する
+			std::queue<FilePath> files;
+			files.push(BaseFolder);
+
+			while (!files.empty())
+			{
+				const auto& filePath = files.front();
+
+				if (FileSystem::IsFile(filePath))
+				{
+					success &= Crypto2::EncryptFile(filePath, filePath, key);
+				}
+				else if (FileSystem::IsDirectory(filePath))
+				{
+					const auto& contents = FileSystem::DirectoryContents(filePath);
+					for (const auto& path : contents)
+					{
+						files.push(path);
+					}
+				}
+
+				files.pop();
+			}
+
+			//作業フォルダをアーカイブ化して保存する
+			success &= Archive::Create(BaseFolder, to);
+
+			//作業用のフォルダを削除する
+			success &= FileSystem::Remove(WorkFolder, false);
+		}
+
+		return success;
+	}
+}
 
 /// <summary>
 /// 暗号化ファイルのアーカイブ
@@ -8,7 +76,10 @@ class ArchiveCryptoFile
 {
 private:
 
+	/// <summary>ファイルアーカイブ</summary>
 	FileArchive fileArchive;
+
+	/// <summary>アーカイブ化するかのフラグ</summary>
 	bool archive = false;
 
 	AES128Key key;
@@ -20,9 +91,10 @@ private:
 	/// <returns>復号化データ</returns>
 	Optional<ByteArray> loadFile(const String path)
 	{
+		//そのまま読み込んでデータを返す
 		ByteArray data(path);
 
-		return Crypto2::Decrypt(data, key);
+		return Optional<ByteArray>(data);
 	}
 	/// <summary>
 	/// アーカイブ中の暗号化ファイルの読み込み
@@ -31,6 +103,7 @@ private:
 	/// <returns>復号化データ</returns>
 	Optional<ByteArray> loadArchiveFile(const String path)
 	{
+		//復号化してデータを返す
 		auto reader = fileArchive.load(path);
 		Array<uint8> buf(static_cast<unsigned int>(reader.size()));
 		reader.read(buf.data(), buf.size());
@@ -43,11 +116,9 @@ public:
 	/// <summary>
 	/// 通常ファイル用コンストラクタ
 	/// </summary>
-	/// <param name="key">復号鍵</param>
-	ArchiveCryptoFile(const AES128Key& key)
+	ArchiveCryptoFile()
 	{
 		archive = false;
-		this->key = key;
 	}
 
 	/// <summary>

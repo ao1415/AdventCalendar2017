@@ -1,38 +1,23 @@
 ﻿#include <Siv3D.hpp>
 #include "CryptoArchive.hpp"
 
-namespace CryptoArchive
-{
-	/// <summary>
-	/// ファイルアーカイブを作成します。
-	/// </summary>
-	/// <param name="from">
-	/// アーカイブ化するディレクトリ
-	/// </param>
-	/// <param name="to">
-	/// 保存するアーカイブファイル名
-	/// </param>
-	/// <returns>
-	/// ファイルアーカイブの作成に成功した場合 true, それ以外の場合は false
-	/// </returns>
-	bool Create(const FilePath& from, const FilePath& to, const AES128Key& key) {
-
-		//TODO:フォルダ内のファイルは全て暗号化する
-		Crypto2::EncryptFile(from, to, key);
-
-		return false;
-	}
-}
-
 void Main()
 {
+	//フォルダ内のファイルを丸ごと暗号化して、アーカイブ化する
+	CryptoArchive::Create(L"./Example", L"./Example.ecp", AES128Key(0, 0));
 
-	//ArchiveCryptoFile file(AES128Key(0, 0));
-	ArchiveCryptoFile file(L"./archive.ecp", AES128Key(0, 0));
-	Texture texture(file.load(L"./archive/Siv3D-kun.ecp"));
+	//通常ファイルの読み込み
+	//ArchiveCryptoFile file;
 
-	texture.draw();
+	//アーカイブファイルの読み込み
+	ArchiveCryptoFile file(L"./Example.ecp", AES128Key(0, 0));
 
-	System::Update();
-	WaitKey();
+	//読み込む際にはどちらでも同じように記載できる
+	Texture texture(file.load(L"./Example/Siv3D-kun.png"));
+
+	while (System::Update())
+	{
+		texture.draw();
+	}
+
 }
