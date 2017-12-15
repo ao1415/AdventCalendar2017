@@ -12,12 +12,11 @@ void Main()
 	//アーカイブファイルの読み込み
 	ArchiveCryptoFile file(L"./Example.ecp", AES128Key(0, 0));
 
-	//読み込む際にはどちらでも同じように記載できる
+	//読み込む際には、どちらでも同じように記載できる
 	Texture texture(file.load(L"./Example/Siv3D-kun.png"));
 
 	while (System::Update())
 	{
 		texture.draw();
 	}
-
 }
